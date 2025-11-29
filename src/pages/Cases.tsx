@@ -1,4 +1,3 @@
-```javascript
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -165,11 +164,11 @@ export default function Cases() {
   };
 
   const filteredCases = MOCK_CASES.filter((c) => {
-    const matchesSearch = 
+    const matchesSearch =
       c.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
       c.analyst.toLowerCase().includes(searchQuery.toLowerCase()) ||
       c.userName.toLowerCase().includes(searchQuery.toLowerCase());
-    
+
     const matchesStatus = statusFilter.length === 0 || statusFilter.includes(c.status);
     const matchesSeverity = severityFilter.length === 0 || severityFilter.includes(c.severity);
 
@@ -184,7 +183,7 @@ export default function Cases() {
           <p className="text-muted-foreground mt-1">Manage and track all security incidents.</p>
         </div>
         <div className="flex items-center gap-2">
-           <Button variant="outline" className="gap-2">
+          <Button variant="outline" className="gap-2">
             <Filter className="w-4 h-4" />
             Advanced Filters
           </Button>
@@ -212,7 +211,7 @@ export default function Cases() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
-              
+
               {/* Filter Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -228,7 +227,7 @@ export default function Cases() {
                       key={status}
                       checked={statusFilter.includes(status)}
                       onCheckedChange={(checked) => {
-                        setStatusFilter(prev => 
+                        setStatusFilter(prev =>
                           checked ? [...prev, status] : prev.filter(s => s !== status)
                         );
                       }}
@@ -244,7 +243,7 @@ export default function Cases() {
                       key={severity}
                       checked={severityFilter.includes(severity)}
                       onCheckedChange={(checked) => {
-                        setSeverityFilter(prev => 
+                        setSeverityFilter(prev =>
                           checked ? [...prev, severity] : prev.filter(s => s !== severity)
                         );
                       }}
@@ -262,55 +261,43 @@ export default function Cases() {
             <Table>
               <TableHeader>
                 <TableRow className="bg-muted/50">
-                  <TableHead className="text-center font-bold">Case ID</TableHead>
-                  <TableHead className="text-center font-bold">Server ID</TableHead>
-                  <TableHead className="text-center font-bold">Severity</TableHead>
-                  <TableHead className="text-center font-bold">Status</TableHead>
-                  <TableHead className="text-center font-bold">Deadline/SLA</TableHead>
-                  <TableHead className="text-center font-bold">Assigned Analyst</TableHead>
-                  <TableHead className="text-center font-bold">Action</TableHead>
+                  <TableHead className="text-center font-bold">Pin</TableHead>
+                  <TableHead className="font-bold">Case ID</TableHead>
+                  <TableHead className="font-bold">Server ID</TableHead>
+                  <TableHead className="font-bold">Type</TableHead>
+                  <TableHead className="font-bold">Status</TableHead>
+                  <TableHead className="font-bold">Severity</TableHead>
+                  <TableHead className="font-bold">Deadline</TableHead>
+                  <TableHead className="font-bold">Analyst</TableHead>
+                  <TableHead className="text-right">Action</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredCases.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                      No cases found matching the criteria.
+                {filteredCases.map((c) => (
+                  <TableRow
+                    key={c.id}
+                    className="cursor-pointer hover:bg-muted/50 transition-colors"
+                    onClick={() => navigate(`/cases/${c.id}`)}
+                  >
+                    <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
+                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={(e) => togglePin(c.id, e)}>
+                        <Star className={`h-4 w-4 ${pinnedCases.includes(c.id) ? "fill-yellow-500 text-yellow-500" : "text-muted-foreground"}`} />
+                      </Button>
+                    </TableCell>
+                    <TableCell className="font-medium text-primary">{c.id}</TableCell>
+                    <TableCell>{c.serverId}</TableCell>
+                    <TableCell>{c.type}</TableCell>
+                    <TableCell>{getStatusBadge(c.status)}</TableCell>
+                    <TableCell>{getSeverityBadge(c.severity)}</TableCell>
+                    <TableCell className="font-mono text-xs">{c.deadline}</TableCell>
+                    <TableCell>{c.analyst}</TableCell>
+                    <TableCell className="text-right">
+                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <ArrowRight className="h-4 w-4 text-muted-foreground" />
+                      </Button>
                     </TableCell>
                   </TableRow>
-                ) : (
-                  filteredCases.map((item) => (
-                    <TableRow key={item.id} className="group hover:bg-muted/5">
-                      <TableCell className="font-medium text-center">{item.id}</TableCell>
-                      <TableCell className="text-center text-muted-foreground">{item.serverId}</TableCell>
-                      <TableCell className="text-center">
-                        <div className="flex justify-center">
-                          {getSeverityBadge(item.severity)}
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <div className="flex justify-center">
-                          {getStatusBadge(item.status)}
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-center">{item.deadline}</TableCell>
-                      <TableCell className="text-center">{item.analyst}</TableCell>
-                      <TableCell className="text-center">
-                        <div className="flex justify-center">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="gap-2 group-hover:text-primary transition-colors"
-                            onClick={() => navigate(`/ cases / ${ item.id } `)}
-                          >
-                            View
-                            <ArrowRight className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
+                ))}
               </TableBody>
             </Table>
           </div>
