@@ -206,7 +206,7 @@ export default function Alerts() {
 
           <div className="grid gap-4">
             {filteredAlerts.map((alert) => (
-              <Card key={alert.id} className={`transition-all duration-200 ${!alert.read ? 'border-l-4 border-l-primary bg-primary/5' : 'opacity-80'}`}>
+              <Card key={alert.id} className={`tech-card transition-all duration-200 ${!alert.read ? 'border-l-4 border-l-primary bg-primary/5' : 'opacity-80'}`}>
                 <CardContent className="p-6 flex items-start gap-4">
                   <div className={`mt-1 p-2 rounded-full ${alert.severity === 'High' ? 'bg-red-500/10 text-red-500' : 'bg-primary/10 text-primary'}`}>
                     <AlertTriangle className="h-5 w-5" />
@@ -218,7 +218,7 @@ export default function Alerts() {
                         {getSeverityBadge(alert.severity)}
                         {!alert.read && <Badge variant="default" className="bg-primary text-primary-foreground text-xs">New</Badge>}
                       </div>
-                      <span className="text-sm text-muted-foreground flex items-center gap-1">
+                      <span className="text-sm text-muted-foreground flex items-center gap-1 font-mono">
                         <Clock className="h-3 w-3" /> {alert.time}
                       </span>
                     </div>
@@ -248,7 +248,7 @@ export default function Alerts() {
         <TabsContent value="messages" className="space-y-4">
           <div className="grid gap-4">
             {messages.map((msg) => (
-              <Card key={msg.id} className={`transition-all duration-200 ${!msg.read ? 'border-l-4 border-l-blue-500 bg-blue-500/5' : ''}`}>
+              <Card key={msg.id} className={`tech-card transition-all duration-200 ${!msg.read ? 'border-l-4 border-l-blue-500 bg-blue-500/5' : ''}`}>
                 <CardContent className="p-6 flex items-start gap-4">
                   <div className="mt-1 p-2 rounded-full bg-blue-500/10 text-blue-500">
                     <Mail className="h-5 w-5" />
@@ -260,7 +260,7 @@ export default function Alerts() {
                         <Badge variant="outline">{msg.role}</Badge>
                         {msg.caseId && <Badge variant="secondary" className="font-mono text-xs">{msg.caseId}</Badge>}
                       </div>
-                      <span className="text-sm text-muted-foreground flex items-center gap-1">
+                      <span className="text-sm text-muted-foreground flex items-center gap-1 font-mono">
                         <Clock className="h-3 w-3" /> {msg.time}
                       </span>
                     </div>

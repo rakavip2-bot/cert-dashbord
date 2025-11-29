@@ -190,7 +190,7 @@ export default function Cases() {
       </div>
 
       {/* Search & Filter Bar */}
-      <Card className="border-border/50 shadow-sm">
+      <Card className="tech-card border-l-4 border-l-primary/50">
         <CardContent className="pt-6">
           <div className="flex gap-4">
             <div className="relative flex-1">
@@ -248,12 +248,12 @@ export default function Cases() {
       </Card>
 
       {/* Cases Table */}
-      <Card className="border-border/50 shadow-sm">
+      <Card className="tech-card border-l-4 border-l-primary/50">
         <CardHeader>
           <CardTitle>Cases List</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="rounded-md border">
+          <div className="rounded-md border border-primary/20">
             <Table>
               <TableHeader>
                 <TableRow className="bg-muted/50">
@@ -280,7 +280,7 @@ export default function Cases() {
                         <Star className={`h-4 w-4 ${pinnedCases.includes(c.id) ? "fill-yellow-500 text-yellow-500" : "text-muted-foreground"}`} />
                       </Button>
                     </TableCell>
-                    <TableCell className="font-medium text-primary">{c.id}</TableCell>
+                    <TableCell className="font-medium text-primary font-mono tracking-tight">{c.id}</TableCell>
                     <TableCell>{c.serverId}</TableCell>
                     <TableCell>{c.type}</TableCell>
                     <TableCell className="text-center">

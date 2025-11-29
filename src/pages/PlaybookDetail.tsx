@@ -245,14 +245,14 @@ export default function PlaybookDetail() {
         <div className="flex-1 flex items-center justify-between">
           <div>
             <h2 className="text-3xl font-bold text-foreground">{playbook.title}</h2>
-            <p className="text-muted-foreground text-sm mt-1">{playbook.id}</p>
+            <p className="text-muted-foreground text-sm mt-1 font-mono tracking-tight">{playbook.id}</p>
           </div>
           {getStatusBadge(playbook.status)}
         </div>
       </div>
 
       {/* AI Steps */}
-      <Card className="border-primary/20">
+      <Card className="tech-card border-l-4 border-l-primary/50">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
@@ -274,7 +274,7 @@ export default function PlaybookDetail() {
       </Card>
 
       {/* Suggested Commands */}
-      <Card>
+      <Card className="tech-card border-l-4 border-l-secondary/50">
         <CardHeader>
           <CardTitle>Suggested Commands</CardTitle>
         </CardHeader>
@@ -296,7 +296,7 @@ export default function PlaybookDetail() {
       </Card>
 
       {/* Action Buttons */}
-      <Card>
+      <Card className="tech-card border-l-4 border-l-accent/50">
         <CardHeader>
           <CardTitle>Playbook Actions</CardTitle>
         </CardHeader>

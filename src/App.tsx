@@ -16,32 +16,45 @@ import SearchPage from "./pages/SearchPage";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
+import { useEffect } from "react";
+
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <DashboardLayout>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/cases" element={<Cases />} />
-            <Route path="/cases/:id" element={<CaseDetail />} />
-            <Route path="/playbooks" element={<Playbooks />} />
-            <Route path="/playbooks/:id" element={<PlaybookDetail />} />
-            <Route path="/reports" element={<Reports />} />
-            <Route path="/reports/:id" element={<ReportEditor />} />
-            <Route path="/alerts" element={<Alerts />} />
-            <Route path="/search" element={<SearchPage />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </DashboardLayout>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "light") {
+      document.documentElement.classList.remove("dark");
+    } else if (savedTheme === "dark") {
+      document.documentElement.classList.add("dark");
+    }
+  }, []);
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <DashboardLayout>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/cases" element={<Cases />} />
+              <Route path="/cases/:id" element={<CaseDetail />} />
+              <Route path="/playbooks" element={<Playbooks />} />
+              <Route path="/playbooks/:id" element={<PlaybookDetail />} />
+              <Route path="/reports" element={<Reports />} />
+              <Route path="/reports/:id" element={<ReportEditor />} />
+              <Route path="/alerts" element={<Alerts />} />
+              <Route path="/search" element={<SearchPage />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </DashboardLayout>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;

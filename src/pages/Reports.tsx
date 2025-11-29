@@ -101,7 +101,7 @@ export default function Reports() {
   };
 
   const ReportsTable = ({ data }: { data: Report[] }) => (
-    <div className="rounded-md border">
+    <div className="rounded-md border border-primary/20">
       <Table>
         <TableHeader>
           <TableRow className="bg-muted/50">
@@ -123,7 +123,7 @@ export default function Reports() {
           ) : (
             data.map((report) => (
               <TableRow key={report.id} className="group hover:bg-muted/5">
-                <TableCell className="font-medium text-center">{report.caseId}</TableCell>
+                <TableCell className="font-medium text-center font-mono tracking-tight text-primary">{report.caseId}</TableCell>
                 <TableCell className="text-center">{report.user}</TableCell>
                 <TableCell className="text-center">
                   <div className="flex justify-center">
@@ -179,7 +179,7 @@ export default function Reports() {
         </div>
       </div>
 
-      <Card className="border-border/50 shadow-sm">
+      <Card className="tech-card border-l-4 border-l-primary/50">
         <CardHeader>
           <CardTitle>All Reports</CardTitle>
         </CardHeader>

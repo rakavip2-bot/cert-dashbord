@@ -149,12 +149,12 @@ export default function Playbooks() {
         </div>
       </div>
 
-      <Card className="border-border/50 shadow-sm">
+      <Card className="tech-card border-l-4 border-l-primary/50">
         <CardHeader>
           <CardTitle>All Playbooks</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="rounded-md border">
+          <div className="rounded-md border border-primary/20">
             <Table>
               <TableHeader>
                 <TableRow className="bg-muted/50">
@@ -170,9 +170,9 @@ export default function Playbooks() {
               <TableBody>
                 {MOCK_PLAYBOOKS.map((playbook) => (
                   <TableRow key={playbook.id} className="group hover:bg-muted/5">
-                    <TableCell className="font-medium text-center">{playbook.id}</TableCell>
+                    <TableCell className="font-medium text-center font-mono tracking-tight text-primary">{playbook.id}</TableCell>
                     <TableCell className="text-center">{playbook.title}</TableCell>
-                    <TableCell className="text-center text-muted-foreground">{playbook.caseId}</TableCell>
+                    <TableCell className="text-center font-mono text-xs">{playbook.caseId}</TableCell>
                     <TableCell className="text-center text-muted-foreground max-w-xs truncate" title={playbook.summary}>{playbook.summary}</TableCell>
                     <TableCell className="text-center">{playbook.date}</TableCell>
                     <TableCell className="text-center">
