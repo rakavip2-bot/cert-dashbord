@@ -43,7 +43,7 @@ export default function Home() {
 
         <Card className="border-accent/20 hover:border-accent/40 transition-colors">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">In Progress</CardTitle>
+            <CardTitle className="text-sm font-medium">Active</CardTitle>
             <AlertTriangle className="h-4 w-4 text-accent" />
           </CardHeader>
           <CardContent>

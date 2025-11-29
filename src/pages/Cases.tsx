@@ -29,7 +29,7 @@ import { toast } from "sonner";
 export interface Case {
   id: string;
   serverId: string;
-  status: "Pending" | "In Progress" | "Solved";
+  status: "Pending" | "Active" | "Solved";
   severity: "Critical" | "High" | "Medium" | "Low";
   deadline: string;
   analyst: string;
@@ -53,7 +53,7 @@ export const MOCK_CASES: Case[] = [
   {
     id: "CASE-105",
     serverId: "SRV-Beta",
-    status: "In Progress",
+    status: "Active",
     severity: "Critical",
     deadline: "2024-03-12",
     analyst: "Jane Smith",
@@ -75,7 +75,7 @@ export const MOCK_CASES: Case[] = [
   {
     id: "CASE-120",
     serverId: "SRV-Delta",
-    status: "In Progress",
+    status: "Active",
     severity: "High",
     deadline: "2024-03-14",
     analyst: "Rachel Green",
@@ -108,7 +108,7 @@ export const MOCK_CASES: Case[] = [
   {
     id: "CASE-130",
     serverId: "SRV-Gamma",
-    status: "In Progress",
+    status: "Active",
     severity: "Low",
     deadline: "2024-03-20",
     analyst: "Louis Litt",
@@ -147,19 +147,21 @@ export default function Cases() {
   };
 
   const getStatusBadge = (status: Case["status"]) => {
+    const commonClasses = "w-[100px] justify-center";
     switch (status) {
-      case "Solved": return <Badge variant="outline" className="text-green-500 border-green-500 flex w-fit items-center gap-1"><CheckCircle className="w-3 h-3" /> Solved</Badge>;
-      case "In Progress": return <Badge variant="outline" className="text-blue-500 border-blue-500 flex w-fit items-center gap-1"><Clock className="w-3 h-3" /> In Progress</Badge>;
-      case "Pending": return <Badge variant="outline" className="text-yellow-500 border-yellow-500 flex w-fit items-center gap-1"><AlertCircle className="w-3 h-3" /> Pending</Badge>;
+      case "Solved": return <Badge variant="outline" className={`text-green-500 border-green-500 flex items-center gap-1 ${commonClasses}`}><CheckCircle className="w-3 h-3" /> Solved</Badge>;
+      case "Active": return <Badge variant="outline" className={`text-blue-500 border-blue-500 flex items-center gap-1 ${commonClasses}`}><Clock className="w-3 h-3" /> Active</Badge>;
+      case "Pending": return <Badge variant="outline" className={`text-yellow-500 border-yellow-500 flex items-center gap-1 ${commonClasses}`}><AlertCircle className="w-3 h-3" /> Pending</Badge>;
     }
   };
 
   const getSeverityBadge = (severity: Case["severity"]) => {
+    const commonClasses = "w-[100px] justify-center";
     switch (severity) {
-      case "Critical": return <Badge variant="destructive" className="flex w-fit items-center gap-1"><ShieldAlert className="w-3 h-3" /> Critical</Badge>;
-      case "High": return <Badge className="bg-orange-500 hover:bg-orange-600 flex w-fit items-center gap-1"><AlertTriangle className="w-3 h-3" /> High</Badge>;
-      case "Medium": return <Badge className="bg-yellow-500 hover:bg-yellow-600 flex w-fit items-center gap-1"><AlertCircle className="w-3 h-3" /> Medium</Badge>;
-      case "Low": return <Badge className="bg-blue-500 hover:bg-blue-600 flex w-fit items-center gap-1"><Info className="w-3 h-3" /> Low</Badge>;
+      case "Critical": return <Badge variant="destructive" className={`flex items-center gap-1 ${commonClasses}`}><ShieldAlert className="w-3 h-3" /> Critical</Badge>;
+      case "High": return <Badge className={`bg-orange-500 hover:bg-orange-600 flex items-center gap-1 ${commonClasses}`}><AlertTriangle className="w-3 h-3" /> High</Badge>;
+      case "Medium": return <Badge className={`bg-yellow-500 hover:bg-yellow-600 flex items-center gap-1 ${commonClasses}`}><AlertCircle className="w-3 h-3" /> Medium</Badge>;
+      case "Low": return <Badge className={`bg-blue-500 hover:bg-blue-600 flex items-center gap-1 ${commonClasses}`}><Info className="w-3 h-3" /> Low</Badge>;
     }
   };
 
@@ -180,81 +182,75 @@ export default function Cases() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-3xl font-bold text-foreground tracking-tight">All Cases</h2>
-          <p className="text-muted-foreground mt-1">Manage and track all security incidents.</p>
+          <p className="text-muted-foreground mt-1">Manage and track security incidents.</p>
         </div>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" className="gap-2">
-            <Filter className="w-4 h-4" />
-            Advanced Filters
-          </Button>
-          <Button className="gap-2 shadow-lg shadow-primary/20">
-            <Folder className="w-4 h-4" />
-            Export Cases
-          </Button>
+        <div className="p-2 bg-primary/10 rounded-full">
+          <Folder className="h-6 w-6 text-primary" />
         </div>
       </div>
 
-      <Card className="border-t-4 border-t-primary shadow-md">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2">
-              <Folder className="h-5 w-5 text-primary" />
-              Case List
-            </CardTitle>
-            <div className="flex items-center gap-2">
-              <div className="relative">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search cases..."
-                  className="pl-9 w-[250px] bg-background/50"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
-
-              {/* Filter Dropdown */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="icon">
-                    <Filter className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuLabel>Filter by Status</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  {["Pending", "In Progress", "Solved"].map((status) => (
-                    <DropdownMenuCheckboxItem
-                      key={status}
-                      checked={statusFilter.includes(status)}
-                      onCheckedChange={(checked) => {
-                        setStatusFilter(prev =>
-                          checked ? [...prev, status] : prev.filter(s => s !== status)
-                        );
-                      }}
-                    >
-                      {status}
-                    </DropdownMenuCheckboxItem>
-                  ))}
-                  <DropdownMenuSeparator />
-                  <DropdownMenuLabel>Filter by Severity</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  {["Critical", "High", "Medium", "Low"].map((severity) => (
-                    <DropdownMenuCheckboxItem
-                      key={severity}
-                      checked={severityFilter.includes(severity)}
-                      onCheckedChange={(checked) => {
-                        setSeverityFilter(prev =>
-                          checked ? [...prev, severity] : prev.filter(s => s !== severity)
-                        );
-                      }}
-                    >
-                      {severity}
-                    </DropdownMenuCheckboxItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
+      {/* Search & Filter Bar */}
+      <Card className="border-border/50 shadow-sm">
+        <CardContent className="pt-6">
+          <div className="flex gap-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search by Case ID, Server ID, or Assigned Analyst..."
+                className="pl-10"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
             </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="gap-2">
+                  <Filter className="h-4 w-4" />
+                  Filter
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel>Filter by Status</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {["Pending", "Active", "Solved"].map((status) => (
+                  <DropdownMenuCheckboxItem
+                    key={status}
+                    checked={statusFilter.includes(status)}
+                    onCheckedChange={(checked) => {
+                      setStatusFilter(prev =>
+                        checked ? [...prev, status] : prev.filter(s => s !== status)
+                      );
+                    }}
+                  >
+                    {status}
+                  </DropdownMenuCheckboxItem>
+                ))}
+                <DropdownMenuSeparator />
+                <DropdownMenuLabel>Filter by Severity</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {["Critical", "High", "Medium", "Low"].map((severity) => (
+                  <DropdownMenuCheckboxItem
+                    key={severity}
+                    checked={severityFilter.includes(severity)}
+                    onCheckedChange={(checked) => {
+                      setSeverityFilter(prev =>
+                        checked ? [...prev, severity] : prev.filter(s => s !== severity)
+                      );
+                    }}
+                  >
+                    {severity}
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Cases Table */}
+      <Card className="border-border/50 shadow-sm">
+        <CardHeader>
+          <CardTitle>Cases List</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="rounded-md border">
@@ -265,8 +261,8 @@ export default function Cases() {
                   <TableHead className="font-bold">Case ID</TableHead>
                   <TableHead className="font-bold">Server ID</TableHead>
                   <TableHead className="font-bold">Type</TableHead>
-                  <TableHead className="font-bold">Status</TableHead>
-                  <TableHead className="font-bold">Severity</TableHead>
+                  <TableHead className="text-center font-bold">Status</TableHead>
+                  <TableHead className="text-center font-bold">Severity</TableHead>
                   <TableHead className="font-bold">Deadline</TableHead>
                   <TableHead className="font-bold">Analyst</TableHead>
                   <TableHead className="text-right">Action</TableHead>
@@ -287,8 +283,16 @@ export default function Cases() {
                     <TableCell className="font-medium text-primary">{c.id}</TableCell>
                     <TableCell>{c.serverId}</TableCell>
                     <TableCell>{c.type}</TableCell>
-                    <TableCell>{getStatusBadge(c.status)}</TableCell>
-                    <TableCell>{getSeverityBadge(c.severity)}</TableCell>
+                    <TableCell className="text-center">
+                      <div className="flex justify-center">
+                        {getStatusBadge(c.status)}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <div className="flex justify-center">
+                        {getSeverityBadge(c.severity)}
+                      </div>
+                    </TableCell>
                     <TableCell className="font-mono text-xs">{c.deadline}</TableCell>
                     <TableCell>{c.analyst}</TableCell>
                     <TableCell className="text-right">
