@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
+import { MOCK_CASES } from "./Cases";
 import {
   CheckCircle,
   Clock,
@@ -23,7 +24,8 @@ import {
   Video,
   Bot,
   Shield,
-  ChevronDown
+  ChevronDown,
+  UserPlus
 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
@@ -33,6 +35,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 // Mock Data for the Case Detail
 const CASE_DATA = {
@@ -84,21 +93,38 @@ const CASE_DATA = {
   ]
 };
 
+// Available analysts list
+const AVAILABLE_ANALYSTS = [
+  "John Doe",
+  "Jane Smith",
+  "Mike Ross",
+  "Rachel Green",
+  "Harvey Specter",
+  "Donna Paulsen",
+  "Louis Litt",
+];
+
 export default function CaseDetail() {
   const { id } = useParams();
   const [isPinned, setIsPinned] = useState(false);
   const [status, setStatus] = useState<"Pending" | "Active" | "Solved">("Active");
   const [notes, setNotes] = useState("");
+  const [assignedAnalyst, setAssignedAnalyst] = useState("");
 
   useEffect(() => {
     const pinned = JSON.parse(localStorage.getItem('pinnedCases') || '[]');
     if (id && pinned.includes(id)) {
       setIsPinned(true);
     }
-    // In a real app, fetch case data based on ID here
-    // For now we use the static CASE_DATA but update status if it matches
-    if (id === "CASE-101") {
-      // setStatus(CASE_DATA.status as any);
+
+    // Load analyst from case data based on ID
+    if (id) {
+      const caseData = MOCK_CASES.find(c => c.id === id);
+      if (caseData && caseData.analyst) {
+        setAssignedAnalyst(caseData.analyst);
+      } else {
+        setAssignedAnalyst("");
+      }
     }
   }, [id]);
 
@@ -210,7 +236,13 @@ export default function CaseDetail() {
                 </div>
                 <div>
                   <h4 className="font-semibold text-sm text-muted-foreground">Assigned Analyst</h4>
-                  <p className="text-lg font-medium">John Doe</p>
+                  <p className="text-lg font-medium">
+                    {assignedAnalyst && assignedAnalyst.trim() !== "" ? (
+                      assignedAnalyst
+                    ) : (
+                      <span className="text-muted-foreground italic">Not Assigned</span>
+                    )}
+                  </p>
                 </div>
               </div>
               <Separator />
@@ -311,23 +343,36 @@ export default function CaseDetail() {
             </CardContent>
           </Card>
 
-          {/* Analyst Notes */}
+          {/* Send Message to Analyst */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5 text-primary" />
-                Analyst Notes
+                <Send className="h-5 w-5 text-primary" />
+                Send Message to Analyst
               </CardTitle>
             </CardHeader>
             <CardContent>
               <Textarea
-                placeholder="Enter your observations, findings, and actions taken..."
+                placeholder="Type your message to the analyst here..."
                 className="min-h-[150px] resize-y"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
               />
               <div className="flex justify-end mt-4">
-                <Button onClick={() => toast.success("Notes saved successfully")}>Save Notes</Button>
+                <Button
+                  onClick={() => {
+                    if (notes.trim()) {
+                      toast.success("Message sent to analyst successfully");
+                      setNotes("");
+                    } else {
+                      toast.error("Please enter a message");
+                    }
+                  }}
+                  className="gap-2"
+                >
+                  <Send className="h-4 w-4" />
+                  Send Message
+                </Button>
               </div>
             </CardContent>
           </Card>
@@ -413,21 +458,60 @@ export default function CaseDetail() {
             </CardContent>
           </Card>
 
-          {/* Quick Actions */}
-          <Card>
+          {/* Analyst Details */}
+          <Card className="border-l-4 border-l-primary shadow-sm">
             <CardHeader>
-              <CardTitle>Quick Actions</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <User className="h-5 w-5 text-primary" />
+                Analyst Details
+              </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
-              <Button className="w-full gap-2" variant="default">
-                <Play className="h-4 w-4" /> Run Playbook
-              </Button>
-              <Button className="w-full gap-2" variant="secondary">
-                <Send className="h-4 w-4" /> Message User
-              </Button>
-              <Button className="w-full gap-2" variant="outline">
-                <Shield className="h-4 w-4" /> Isolate Host
-              </Button>
+            <CardContent>
+              {assignedAnalyst && assignedAnalyst.trim() !== "" ? (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-lg">
+                      {assignedAnalyst.split(' ').map(n => n[0]).join('')}
+                    </div>
+                    <div>
+                      <p className="font-bold text-lg">{assignedAnalyst}</p>
+                      <p className="text-sm text-muted-foreground">Security Analyst</p>
+                    </div>
+                  </div>
+                  <Separator />
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2 text-sm">
+                      <Mail className="w-4 h-4 text-muted-foreground" />
+                      <a href={`mailto:${assignedAnalyst.toLowerCase().replace(' ', '.')}@company.com`} className="hover:underline">
+                        {assignedAnalyst.toLowerCase().replace(' ', '.')}.@company.com
+                      </a>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <Phone className="w-4 h-4 text-muted-foreground" />
+                      <span>+1 (555) 000-0000</span>
+                    </div>
+                  </div>
+                  <Separator />
+                  <div className="space-y-2">
+                    <h4 className="text-sm font-semibold">Status</h4>
+                    <div className="flex items-center gap-2">
+                      <div className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                      </div>
+                      <span className="text-sm text-muted-foreground">Active</span>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <div className="h-16 w-16 rounded-full bg-muted mx-auto mb-4 flex items-center justify-center">
+                    <User className="h-8 w-8 text-muted-foreground" />
+                  </div>
+                  <p className="text-lg font-medium text-muted-foreground mb-2">No Analyst Assigned</p>
+                  <p className="text-sm text-muted-foreground">This case has not been assigned to an analyst yet.</p>
+                </div>
+              )}
             </CardContent>
           </Card>
 

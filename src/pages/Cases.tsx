@@ -22,8 +22,15 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Folder, Search, Eye, Clock, CheckCircle, AlertCircle, ArrowRight, AlertTriangle, ShieldAlert, Info, Filter, Star } from "lucide-react";
+import { Folder, Search, Eye, Clock, CheckCircle, AlertCircle, ArrowRight, AlertTriangle, ShieldAlert, Info, Filter, Star, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 
 export interface Case {
@@ -56,7 +63,7 @@ export const MOCK_CASES: Case[] = [
     status: "Active",
     severity: "Critical",
     deadline: "2024-03-12",
-    analyst: "Jane Smith",
+    analyst: "",
     userName: "Bob Williams",
     userEmail: "bob.w@company.com",
     type: "Malware",
@@ -67,7 +74,7 @@ export const MOCK_CASES: Case[] = [
     status: "Pending",
     severity: "Medium",
     deadline: "2024-03-15",
-    analyst: "Mike Ross",
+    analyst: "",
     userName: "Charlie Brown",
     userEmail: "charlie.b@company.com",
     type: "Suspicious Login",
@@ -89,7 +96,7 @@ export const MOCK_CASES: Case[] = [
     status: "Pending",
     severity: "Critical",
     deadline: "2024-03-16",
-    analyst: "Harvey Specter",
+    analyst: "",
     userName: "Eve Wilson",
     userEmail: "eve.w@company.com",
     type: "Ransomware",
@@ -111,11 +118,22 @@ export const MOCK_CASES: Case[] = [
     status: "Active",
     severity: "Low",
     deadline: "2024-03-20",
-    analyst: "Louis Litt",
+    analyst: "",
     userName: "Grace Hopper",
     userEmail: "grace.h@company.com",
     type: "Unauthorized Access",
   },
+];
+
+// Available analysts list
+const AVAILABLE_ANALYSTS = [
+  "John Doe",
+  "Jane Smith",
+  "Mike Ross",
+  "Rachel Green",
+  "Harvey Specter",
+  "Donna Paulsen",
+  "Louis Litt",
 ];
 
 export default function Cases() {
@@ -124,7 +142,11 @@ export default function Cases() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string[]>([]);
   const [severityFilter, setSeverityFilter] = useState<string[]>([]);
+  const [assignmentFilter, setAssignmentFilter] = useState<string[]>([]);
   const [pinnedCases, setPinnedCases] = useState<string[]>([]);
+  const [cases, setCases] = useState<Case[]>(MOCK_CASES);
+  const [assignDialogOpen, setAssignDialogOpen] = useState(false);
+  const [selectedCaseId, setSelectedCaseId] = useState<string | null>(null);
 
   useEffect(() => {
     const pinned = JSON.parse(localStorage.getItem('pinnedCases') || '[]');
@@ -146,26 +168,45 @@ export default function Cases() {
     localStorage.setItem('pinnedCases', JSON.stringify(newPinned));
   };
 
+  const openAssignDialog = (caseId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSelectedCaseId(caseId);
+    setAssignDialogOpen(true);
+  };
+
+  const assignAnalyst = (analystName: string) => {
+    if (selectedCaseId) {
+      setCases(prevCases =>
+        prevCases.map(c =>
+          c.id === selectedCaseId ? { ...c, analyst: analystName } : c
+        )
+      );
+      toast.success(`Assigned ${analystName} to ${selectedCaseId}`);
+      setAssignDialogOpen(false);
+      setSelectedCaseId(null);
+    }
+  };
+
   const getStatusBadge = (status: Case["status"]) => {
-    const commonClasses = "w-[100px] justify-center";
+    const commonClasses = "w-[100px] justify-center font-semibold";
     switch (status) {
-      case "Solved": return <Badge variant="outline" className={`text-green-500 border-green-500 flex items-center gap-1 ${commonClasses}`}><CheckCircle className="w-3 h-3" /> Solved</Badge>;
-      case "Active": return <Badge variant="outline" className={`text-blue-500 border-blue-500 flex items-center gap-1 ${commonClasses}`}><Clock className="w-3 h-3" /> Active</Badge>;
-      case "Pending": return <Badge variant="outline" className={`text-yellow-500 border-yellow-500 flex items-center gap-1 ${commonClasses}`}><AlertCircle className="w-3 h-3" /> Pending</Badge>;
+      case "Solved": return <Badge className={`bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/25 flex items-center gap-1 ${commonClasses}`}><CheckCircle className="w-3 h-3" /> Solved</Badge>;
+      case "Active": return <Badge className={`bg-blue-500/15 text-blue-700 dark:text-blue-400 border-blue-500/30 hover:bg-blue-500/25 flex items-center gap-1 ${commonClasses}`}><Clock className="w-3 h-3" /> Active</Badge>;
+      case "Pending": return <Badge className={`bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/30 hover:bg-amber-500/25 flex items-center gap-1 ${commonClasses}`}><AlertCircle className="w-3 h-3" /> Pending</Badge>;
     }
   };
 
   const getSeverityBadge = (severity: Case["severity"]) => {
-    const commonClasses = "w-[100px] justify-center";
+    const commonClasses = "w-[100px] justify-center font-semibold border";
     switch (severity) {
-      case "Critical": return <Badge variant="destructive" className={`flex items-center gap-1 ${commonClasses}`}><ShieldAlert className="w-3 h-3" /> Critical</Badge>;
-      case "High": return <Badge className={`bg-orange-500 hover:bg-orange-600 flex items-center gap-1 ${commonClasses}`}><AlertTriangle className="w-3 h-3" /> High</Badge>;
-      case "Medium": return <Badge className={`bg-yellow-500 hover:bg-yellow-600 flex items-center gap-1 ${commonClasses}`}><AlertCircle className="w-3 h-3" /> Medium</Badge>;
-      case "Low": return <Badge className={`bg-blue-500 hover:bg-blue-600 flex items-center gap-1 ${commonClasses}`}><Info className="w-3 h-3" /> Low</Badge>;
+      case "Critical": return <Badge className={`bg-red-500/15 text-red-700 dark:text-red-400 border-red-500/30 hover:bg-red-500/25 flex items-center gap-1 ${commonClasses}`}><ShieldAlert className="w-3 h-3" /> Critical</Badge>;
+      case "High": return <Badge className={`bg-orange-500/15 text-orange-700 dark:text-orange-400 border-orange-500/30 hover:bg-orange-500/25 flex items-center gap-1 ${commonClasses}`}><AlertTriangle className="w-3 h-3" /> High</Badge>;
+      case "Medium": return <Badge className={`bg-yellow-500/15 text-yellow-700 dark:text-yellow-400 border-yellow-500/30 hover:bg-yellow-500/25 flex items-center gap-1 ${commonClasses}`}><AlertCircle className="w-3 h-3" /> Medium</Badge>;
+      case "Low": return <Badge className={`bg-blue-500/15 text-blue-700 dark:text-blue-400 border-blue-500/30 hover:bg-blue-500/25 flex items-center gap-1 ${commonClasses}`}><Info className="w-3 h-3" /> Low</Badge>;
     }
   };
 
-  const filteredCases = MOCK_CASES.filter((c) => {
+  const filteredCases = cases.filter((c) => {
     const matchesSearch =
       c.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
       c.analyst.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -174,7 +215,12 @@ export default function Cases() {
     const matchesStatus = statusFilter.length === 0 || statusFilter.includes(c.status);
     const matchesSeverity = severityFilter.length === 0 || severityFilter.includes(c.severity);
 
-    return matchesSearch && matchesStatus && matchesSeverity;
+    // Check assignment filter
+    const matchesAssignment = assignmentFilter.length === 0 ||
+      (assignmentFilter.includes("Assigned") && c.analyst && c.analyst.trim() !== "") ||
+      (assignmentFilter.includes("Unassigned") && (!c.analyst || c.analyst.trim() === ""));
+
+    return matchesSearch && matchesStatus && matchesSeverity && matchesAssignment;
   });
 
   return (
@@ -184,9 +230,9 @@ export default function Cases() {
           <h2 className="text-3xl font-bold text-foreground tracking-tight">All Cases</h2>
           <p className="text-muted-foreground mt-1">Manage and track security incidents.</p>
         </div>
-        <div className="p-2 bg-primary/10 rounded-full">
-          <Folder className="h-6 w-6 text-primary" />
-        </div>
+        <Button className="rounded-md">
+          Auto Assign
+        </Button>
       </div>
 
       {/* Search & Filter Bar */}
@@ -241,6 +287,22 @@ export default function Cases() {
                     {severity}
                   </DropdownMenuCheckboxItem>
                 ))}
+                <DropdownMenuSeparator />
+                <DropdownMenuLabel>Filter by Assignment</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {["Assigned", "Unassigned"].map((assignment) => (
+                  <DropdownMenuCheckboxItem
+                    key={assignment}
+                    checked={assignmentFilter.includes(assignment)}
+                    onCheckedChange={(checked) => {
+                      setAssignmentFilter(prev =>
+                        checked ? [...prev, assignment] : prev.filter(a => a !== assignment)
+                      );
+                    }}
+                  >
+                    {assignment}
+                  </DropdownMenuCheckboxItem>
+                ))}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -256,46 +318,64 @@ export default function Cases() {
           <div className="rounded-md border border-primary/20">
             <Table>
               <TableHeader>
-                <TableRow className="bg-muted/50">
-                  <TableHead className="text-center font-bold">Pin</TableHead>
-                  <TableHead className="font-bold">Case ID</TableHead>
-                  <TableHead className="font-bold">Server ID</TableHead>
-                  <TableHead className="font-bold">Type</TableHead>
-                  <TableHead className="text-center font-bold">Status</TableHead>
-                  <TableHead className="text-center font-bold">Severity</TableHead>
-                  <TableHead className="font-bold">Deadline</TableHead>
-                  <TableHead className="font-bold">Analyst</TableHead>
-                  <TableHead className="text-right">Action</TableHead>
+                <TableRow className="bg-muted/50 border-b-2 border-primary/20">
+                  <TableHead className="text-center font-bold text-xs uppercase tracking-wider h-12 px-4 w-20">Pin</TableHead>
+                  <TableHead className="text-center font-bold text-xs uppercase tracking-wider h-12 px-4 w-32">Case ID</TableHead>
+                  <TableHead className="text-center font-bold text-xs uppercase tracking-wider h-12 px-4 w-40">Type</TableHead>
+                  <TableHead className="text-center font-bold text-xs uppercase tracking-wider h-12 px-4 w-32">Status</TableHead>
+                  <TableHead className="text-center font-bold text-xs uppercase tracking-wider h-12 px-4 w-32">Severity</TableHead>
+                  <TableHead className="text-center font-bold text-xs uppercase tracking-wider h-12 px-4 w-32">Deadline</TableHead>
+                  <TableHead className="text-center font-bold text-xs uppercase tracking-wider h-12 px-4 w-40">Analyst</TableHead>
+                  <TableHead className="text-center font-bold text-xs uppercase tracking-wider h-12 px-4 w-24">Action</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredCases.map((c) => (
                   <TableRow
                     key={c.id}
-                    className="cursor-pointer hover:bg-muted/50 transition-colors"
+                    className="cursor-pointer hover:bg-primary/5 transition-colors border-b border-border/50"
                     onClick={() => navigate(`/cases/${c.id}`)}
                   >
-                    <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
+                    <TableCell className="text-center align-middle h-16 px-4" onClick={(e) => e.stopPropagation()}>
                       <Button variant="ghost" size="icon" className="h-8 w-8" onClick={(e) => togglePin(c.id, e)}>
                         <Star className={`h-4 w-4 ${pinnedCases.includes(c.id) ? "fill-yellow-500 text-yellow-500" : "text-muted-foreground"}`} />
                       </Button>
                     </TableCell>
-                    <TableCell className="font-medium text-primary font-mono tracking-tight">{c.id}</TableCell>
-                    <TableCell>{c.serverId}</TableCell>
-                    <TableCell>{c.type}</TableCell>
-                    <TableCell className="text-center">
-                      <div className="flex justify-center">
-                        {getStatusBadge(c.status)}
-                      </div>
+                    <TableCell className="text-center font-bold text-primary font-mono tracking-tight align-middle h-16 px-4">{c.id}</TableCell>
+                    <TableCell className="text-center font-medium text-sm align-middle h-16 px-4">{c.type}</TableCell>
+                    <TableCell className="text-center align-middle h-16 px-4">
+                      {getStatusBadge(c.status)}
                     </TableCell>
-                    <TableCell className="text-center">
-                      <div className="flex justify-center">
-                        {getSeverityBadge(c.severity)}
-                      </div>
+                    <TableCell className="text-center align-middle h-16 px-4">
+                      {getSeverityBadge(c.severity)}
                     </TableCell>
-                    <TableCell className="font-mono text-xs">{c.deadline}</TableCell>
-                    <TableCell>{c.analyst}</TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-center font-mono text-sm align-middle h-16 px-4">{c.deadline}</TableCell>
+                    <TableCell className="text-center text-sm align-middle h-16 px-4">
+                      {c.analyst && c.analyst.trim() !== "" ? (
+                        <div className="flex flex-col items-center gap-1">
+                          <span className="font-medium">{c.analyst}</span>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-6 text-xs text-muted-foreground hover:text-primary"
+                            onClick={(e) => openAssignDialog(c.id, e)}
+                          >
+                            Change Analyst
+                          </Button>
+                        </div>
+                      ) : (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-8 text-xs gap-1"
+                          onClick={(e) => openAssignDialog(c.id, e)}
+                        >
+                          <UserPlus className="h-3 w-3" />
+                          Assign Analyst
+                        </Button>
+                      )}
+                    </TableCell>
+                    <TableCell className="text-center align-middle h-16 px-4">
                       <Button variant="ghost" size="icon" className="h-8 w-8">
                         <ArrowRight className="h-4 w-4 text-muted-foreground" />
                       </Button>
@@ -307,6 +387,43 @@ export default function Cases() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Assign Analyst Dialog */}
+      <Dialog open={assignDialogOpen} onOpenChange={setAssignDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Assign Analyst</DialogTitle>
+            <DialogDescription>
+              Select an analyst to assign to {selectedCaseId}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2 py-4">
+            {AVAILABLE_ANALYSTS.map((analyst) => (
+              <div
+                key={analyst}
+                className="flex items-center justify-between p-3 rounded-lg border border-border hover:bg-muted/50 transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+                    <span className="text-sm font-semibold text-primary">
+                      {analyst.split(' ').map(n => n[0]).join('')}
+                    </span>
+                  </div>
+                  <span className="font-medium">{analyst}</span>
+                </div>
+                <Button
+                  size="sm"
+                  onClick={() => assignAnalyst(analyst)}
+                  className="gap-1"
+                >
+                  <UserPlus className="h-3 w-3" />
+                  Assign
+                </Button>
+              </div>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

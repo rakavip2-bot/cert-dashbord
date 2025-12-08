@@ -251,61 +251,136 @@ export default function PlaybookDetail() {
         </div>
       </div>
 
-      {/* AI Steps */}
+      {/* Case Information */}
       <Card className="tech-card border-l-4 border-l-primary/50">
         <CardHeader>
+          <CardTitle>Case Information</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <h4 className="text-sm font-semibold text-muted-foreground mb-1">Case ID</h4>
+              <p className="text-lg font-mono font-bold text-primary">CASE-101</p>
+            </div>
+            <div>
+              <h4 className="text-sm font-semibold text-muted-foreground mb-1">Case Name</h4>
+              <p className="text-lg font-medium">Phishing Attack Investigation</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* User Playbook */}
+      <Card className="tech-card border-l-4 border-l-blue-500/50">
+        <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
-            AI-Generated Resolution Steps
+            <FileText className="h-5 w-5 text-blue-500" />
+            User Playbook
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {playbook.steps.map((step, index) => (
-              <div key={index} className="flex gap-3 items-start p-3 rounded-lg bg-muted/30 border border-border/50">
-                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm font-bold mt-0.5">
-                  {index + 1}
-                </div>
-                <p className="text-foreground/90 leading-relaxed">{step}</p>
+            <p className="text-sm text-muted-foreground mb-4">
+              Instructions and guidance for the end user to follow during this incident.
+            </p>
+            <div className="space-y-3">
+              <div className="p-4 rounded-lg bg-blue-500/5 border border-blue-500/20">
+                <h4 className="font-semibold text-sm mb-2">What You Should Do:</h4>
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
+                    <span>Do not click on any suspicious links or attachments</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
+                    <span>Report the incident immediately to your IT department</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
+                    <span>Keep your computer powered on for investigation</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
+                    <span>Change your password if instructed by security team</span>
+                  </li>
+                </ul>
               </div>
-            ))}
+              <div className="p-4 rounded-lg bg-red-500/5 border border-red-500/20">
+                <h4 className="font-semibold text-sm mb-2">What You Should NOT Do:</h4>
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-start gap-2">
+                    <X className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0" />
+                    <span>Do not delete any emails or files related to the incident</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <X className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0" />
+                    <span>Do not shut down or restart your computer</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <X className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0" />
+                    <span>Do not attempt to investigate or fix the issue yourself</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Suggested Commands */}
-      <Card className="tech-card border-l-4 border-l-secondary/50">
+      {/* Analyst Playbook */}
+      <Card className="tech-card border-l-4 border-l-orange-500/50">
         <CardHeader>
-          <CardTitle>Suggested Commands</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <Send className="h-5 w-5 text-orange-500" />
+            Analyst Playbook
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3">
-            {playbook.commands.map((cmd, index) => (
-              <div key={index} className="bg-slate-950 text-slate-50 font-mono text-sm p-4 rounded-md border border-slate-800 shadow-inner flex items-center justify-between group">
-                <code>{cmd}</code>
-                <Button variant="ghost" size="sm" className="opacity-0 group-hover:opacity-100 h-6 text-xs text-slate-400 hover:text-slate-100" onClick={() => {
-                  navigator.clipboard.writeText(cmd);
-                  toast.success("Command copied to clipboard");
-                }}>
-                  Copy
-                </Button>
+          <div className="space-y-4">
+            <p className="text-sm text-muted-foreground mb-4">
+              Technical procedures and investigation steps for security analysts.
+            </p>
+            <div className="space-y-4">
+              <div className="p-4 rounded-lg bg-orange-500/5 border border-orange-500/20">
+                <h4 className="font-semibold text-sm mb-3">Investigation Steps:</h4>
+                <ol className="space-y-3 text-sm">
+                  <li className="flex gap-3">
+                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-orange-500/20 text-orange-700 dark:text-orange-400 flex items-center justify-center text-xs font-bold">1</span>
+                    <span>Collect and preserve all relevant logs (email headers, firewall logs, endpoint logs)</span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-orange-500/20 text-orange-700 dark:text-orange-400 flex items-center justify-center text-xs font-bold">2</span>
+                    <span>Analyze the attack vector and identify indicators of compromise (IOCs)</span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-orange-500/20 text-orange-700 dark:text-orange-400 flex items-center justify-center text-xs font-bold">3</span>
+                    <span>Contain the threat by isolating affected systems and blocking malicious IPs/domains</span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-orange-500/20 text-orange-700 dark:text-orange-400 flex items-center justify-center text-xs font-bold">4</span>
+                    <span>Eradicate the threat and verify no persistence mechanisms remain</span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-orange-500/20 text-orange-700 dark:text-orange-400 flex items-center justify-center text-xs font-bold">5</span>
+                    <span>Document findings and create incident report for stakeholders</span>
+                  </li>
+                </ol>
               </div>
-            ))}
+              <div className="p-4 rounded-lg bg-slate-950 border border-slate-800">
+                <h4 className="font-semibold text-sm mb-3 text-slate-100">Key Forensic Artifacts:</h4>
+                <ul className="space-y-2 text-sm text-slate-300 font-mono">
+                  <li>• Email headers and message tracking logs</li>
+                  <li>• Firewall and proxy logs for malicious domains</li>
+                  <li>• Endpoint detection logs (EDR/AV alerts)</li>
+                  <li>• User authentication logs (successful/failed logins)</li>
+                  <li>• Network traffic captures (PCAP files)</li>
+                </ul>
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Action Buttons */}
-      <Card className="tech-card border-l-4 border-l-accent/50">
-        <CardHeader>
-          <CardTitle>Playbook Actions</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-wrap gap-3">
-            {renderActions()}
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }

@@ -18,7 +18,7 @@ import { useNavigate } from "react-router-dom";
 export interface Report {
   id: string;
   caseId: string;
-  user: string;
+  analyst: string;
   status: "Sent" | "Pending" | "Draft";
   sentToUser: boolean;
   date: string;
@@ -29,7 +29,7 @@ export const MOCK_REPORTS: Report[] = [
   {
     id: "REP-2024-001",
     caseId: "CASE-101",
-    user: "Alice Johnson",
+    analyst: "John Doe",
     status: "Sent",
     sentToUser: true,
     date: "2024-03-10",
@@ -38,7 +38,7 @@ export const MOCK_REPORTS: Report[] = [
   {
     id: "REP-2024-002",
     caseId: "CASE-105",
-    user: "Bob Williams",
+    analyst: "Jane Smith",
     status: "Pending",
     sentToUser: false,
     date: "2024-03-12",
@@ -47,7 +47,7 @@ export const MOCK_REPORTS: Report[] = [
   {
     id: "REP-2024-003",
     caseId: "CASE-112",
-    user: "Charlie Brown",
+    analyst: "Mike Ross",
     status: "Draft",
     sentToUser: false,
     date: "2024-03-15",
@@ -56,7 +56,7 @@ export const MOCK_REPORTS: Report[] = [
   {
     id: "REP-2024-004",
     caseId: "CASE-120",
-    user: "David Miller",
+    analyst: "Rachel Green",
     status: "Sent",
     sentToUser: true,
     date: "2024-03-14",
@@ -65,7 +65,7 @@ export const MOCK_REPORTS: Report[] = [
   {
     id: "REP-2024-005",
     caseId: "CASE-125",
-    user: "Eve Wilson",
+    analyst: "Harvey Specter",
     status: "Pending",
     sentToUser: false,
     date: "2024-03-16",
@@ -106,9 +106,7 @@ export default function Reports() {
         <TableHeader>
           <TableRow className="bg-muted/50">
             <TableHead className="text-center font-bold">Case ID</TableHead>
-            <TableHead className="text-center font-bold">User</TableHead>
-            <TableHead className="text-center font-bold">Status</TableHead>
-            <TableHead className="text-center font-bold">Sent to User</TableHead>
+            <TableHead className="text-center font-bold">Analyst</TableHead>
             <TableHead className="text-center font-bold">Download PDF</TableHead>
             <TableHead className="text-center font-bold">Action</TableHead>
           </TableRow>
@@ -116,7 +114,7 @@ export default function Reports() {
         <TableBody>
           {data.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
+              <TableCell colSpan={4} className="h-24 text-center text-muted-foreground">
                 No reports found.
               </TableCell>
             </TableRow>
@@ -124,21 +122,7 @@ export default function Reports() {
             data.map((report) => (
               <TableRow key={report.id} className="group hover:bg-muted/5">
                 <TableCell className="font-medium text-center font-mono tracking-tight text-primary">{report.caseId}</TableCell>
-                <TableCell className="text-center">{report.user}</TableCell>
-                <TableCell className="text-center">
-                  <div className="flex justify-center">
-                    {getStatusBadge(report.status)}
-                  </div>
-                </TableCell>
-                <TableCell className="text-center">
-                  <div className="flex justify-center items-center gap-2">
-                    {report.sentToUser ? (
-                      <Badge variant="outline" className="text-green-600 border-green-200 bg-green-50">Yes</Badge>
-                    ) : (
-                      <Badge variant="outline" className="text-muted-foreground">No</Badge>
-                    )}
-                  </div>
-                </TableCell>
+                <TableCell className="text-center">{report.analyst}</TableCell>
                 <TableCell className="text-center">
                   <Button
                     variant="outline"
@@ -156,7 +140,7 @@ export default function Reports() {
                     size="sm"
                     onClick={() => navigate(`/reports/${report.id}`)}
                   >
-                    Edit / View
+                    View
                   </Button>
                 </TableCell>
               </TableRow>
@@ -179,31 +163,13 @@ export default function Reports() {
         </div>
       </div>
 
+
       <Card className="tech-card border-l-4 border-l-primary/50">
         <CardHeader>
           <CardTitle>All Reports</CardTitle>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="all" className="w-full">
-            <TabsList className="grid w-full grid-cols-4 mb-4">
-              <TabsTrigger value="all">All Reports</TabsTrigger>
-              <TabsTrigger value="sent">Sent</TabsTrigger>
-              <TabsTrigger value="pending">Pending</TabsTrigger>
-              <TabsTrigger value="draft">Drafts</TabsTrigger>
-            </TabsList>
-            <TabsContent value="all">
-              <ReportsTable data={reports} />
-            </TabsContent>
-            <TabsContent value="sent">
-              <ReportsTable data={reports.filter(r => r.status === "Sent")} />
-            </TabsContent>
-            <TabsContent value="pending">
-              <ReportsTable data={reports.filter(r => r.status === "Pending")} />
-            </TabsContent>
-            <TabsContent value="draft">
-              <ReportsTable data={reports.filter(r => r.status === "Draft")} />
-            </TabsContent>
-          </Tabs>
+          <ReportsTable data={reports} />
         </CardContent>
       </Card>
     </div>

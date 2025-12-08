@@ -157,41 +157,31 @@ export default function Playbooks() {
           <div className="rounded-md border border-primary/20">
             <Table>
               <TableHeader>
-                <TableRow className="bg-muted/50">
-                  <TableHead className="text-center font-bold">Playbook ID</TableHead>
-                  <TableHead className="text-center font-bold">Title</TableHead>
-                  <TableHead className="text-center font-bold">Case ID</TableHead>
-                  <TableHead className="text-center font-bold">Summary</TableHead>
-                  <TableHead className="text-center font-bold">Date</TableHead>
-                  <TableHead className="text-center font-bold">Status</TableHead>
-                  <TableHead className="text-center font-bold">Action</TableHead>
+                <TableRow className="bg-muted/50 border-b-2 border-primary/20">
+                  <TableHead className="text-center font-bold text-xs uppercase tracking-wider h-12 px-4">Case ID</TableHead>
+                  <TableHead className="text-center font-bold text-xs uppercase tracking-wider h-12 px-4">Title</TableHead>
+                  <TableHead className="text-center font-bold text-xs uppercase tracking-wider h-12 px-4">Date</TableHead>
+                  <TableHead className="text-center font-bold text-xs uppercase tracking-wider h-12 px-4">Playbook</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {MOCK_PLAYBOOKS.map((playbook) => (
-                  <TableRow key={playbook.id} className="group hover:bg-muted/5">
-                    <TableCell className="font-medium text-center font-mono tracking-tight text-primary">{playbook.id}</TableCell>
-                    <TableCell className="text-center">{playbook.title}</TableCell>
-                    <TableCell className="text-center font-mono text-xs">{playbook.caseId}</TableCell>
-                    <TableCell className="text-center text-muted-foreground max-w-xs truncate" title={playbook.summary}>{playbook.summary}</TableCell>
-                    <TableCell className="text-center">{playbook.date}</TableCell>
-                    <TableCell className="text-center">
-                      <div className="flex justify-center">
-                        {getStatusBadge(playbook.status)}
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <div className="flex justify-center">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="gap-2 group-hover:text-primary transition-colors"
-                          onClick={() => navigate(`/playbooks/${playbook.id}`)}
-                        >
-                          View
-                          <ArrowRight className="h-4 w-4" />
-                        </Button>
-                      </div>
+                  <TableRow key={playbook.id} className="cursor-pointer hover:bg-primary/5 transition-colors border-b border-border/50" onClick={() => navigate(`/playbooks/${playbook.id}`)}>
+                    <TableCell className="text-center font-mono text-sm align-middle h-16 px-4">{playbook.caseId}</TableCell>
+                    <TableCell className="text-center font-medium text-sm align-middle h-16 px-4">{playbook.title}</TableCell>
+                    <TableCell className="text-center text-sm align-middle h-16 px-4">{playbook.date}</TableCell>
+                    <TableCell className="text-center align-middle h-16 px-4">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/playbooks/${playbook.id}`);
+                        }}
+                      >
+                        <ArrowRight className="h-4 w-4 text-muted-foreground" />
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}

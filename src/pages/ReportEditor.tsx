@@ -3,13 +3,32 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
-import { Download, Send, Sparkles, Eye, Mail, Globe, ArrowLeft, Save } from "lucide-react";
+import { Download, Send, Sparkles, Eye, Mail, Globe, ArrowLeft, Save, FileText } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+
 
 export default function ReportEditor() {
   const navigate = useNavigate();
+  const { id } = useParams();
+
+  // In a real app, fetch report data based on ID
+  // For now, using mock data based on report ID
+  const getReportData = (reportId: string | undefined) => {
+    const reportMap: Record<string, { caseId: string; caseName: string; analyst: string; isAssigned: boolean; isSubmitted: boolean }> = {
+      "REP-2024-001": { caseId: "CASE-101", caseName: "Phishing Attack Investigation", analyst: "John Doe", isAssigned: true, isSubmitted: true },
+      "REP-2024-002": { caseId: "CASE-105", caseName: "Malware Containment", analyst: "Jane Smith", isAssigned: true, isSubmitted: false },
+      "REP-2024-003": { caseId: "CASE-112", caseName: "Suspicious Activity Report", analyst: "Not Assigned", isAssigned: false, isSubmitted: false },
+      "REP-2024-004": { caseId: "CASE-120", caseName: "Data Leakage Assessment", analyst: "Rachel Green", isAssigned: true, isSubmitted: true },
+      "REP-2024-005": { caseId: "CASE-125", caseName: "Ransomware Incident Report", analyst: "Not Assigned", isAssigned: false, isSubmitted: false },
+    };
+    return reportMap[reportId || ""] || { caseId: "CASE-101", caseName: "Phishing Attack Investigation", analyst: "John Doe", isAssigned: true, isSubmitted: true };
+  };
+
+  const reportData = getReportData(id);
+  const isReportSubmitted = reportData.isSubmitted;
+  const isAssigned = reportData.isAssigned;
 
   const handleSendEmail = () => {
     toast.success("Report sent to user successfully!");
@@ -29,78 +48,106 @@ export default function ReportEditor() {
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500 max-w-5xl mx-auto">
+      {/* Header */}
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="icon" onClick={() => navigate("/reports")}>
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <div className="flex-1 flex items-center justify-between">
-          <div>
-            <h2 className="text-3xl font-bold text-foreground tracking-tight">Report Editor</h2>
-            <p className="text-muted-foreground mt-1">Review AI suggestions and finalize the resolution report.</p>
-          </div>
-          <div className="flex gap-2">
-            <Badge variant="outline" className="px-3 py-1">Case #12345</Badge>
-            <Badge variant="secondary" className="px-3 py-1">Draft</Badge>
-          </div>
+        <div className="flex-1">
+          <h2 className="text-3xl font-bold text-foreground tracking-tight">Report</h2>
         </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-3">
-        <div className="md:col-span-2 space-y-6">
-          {/* AI Suggested Resolution */}
-          <Card className="border-primary/20 bg-primary/5 shadow-sm">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-primary">
-                <Sparkles className="h-5 w-5 animate-pulse" />
-                AI Suggested Resolution
-              </CardTitle>
-              <CardDescription>Generated based on case analysis and playbook execution.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="bg-background/50 p-4 rounded-md border border-primary/10 text-sm leading-relaxed space-y-3">
-                <div>
-                  <strong className="text-primary/90 block mb-1">Issue Summary</strong>
-                  <p>Phishing attempt detected via email. User reported suspicious link.</p>
-                </div>
-                <div>
-                  <strong className="text-primary/90 block mb-1">Actions Taken</strong>
-                  <ul className="list-disc list-inside pl-2 text-muted-foreground">
-                    <li>Analyzed email headers for origin IP.</li>
-                    <li>Scanned attachment for malware signatures.</li>
-                    <li>Blocked sender domain on the email gateway.</li>
-                  </ul>
-                </div>
-                <div>
-                  <strong className="text-primary/90 block mb-1">Technical Explanation</strong>
-                  <p>The email contained a malicious payload targeting CVE-2024-XXXX. The sender IP 192.168.x.x is a known bad actor.</p>
-                </div>
-                <div>
-                  <strong className="text-primary/90 block mb-1">Threat Description</strong>
-                  <p>Credential harvesting campaign targeting financial data.</p>
-                </div>
-                <div>
-                  <strong className="text-primary/90 block mb-1">Final Advice</strong>
-                  <p>User should reset their password and complete security awareness training.</p>
-                </div>
-              </div>
-              <div className="mt-4 flex justify-end">
-                <Button variant="secondary" size="sm" className="text-xs">
-                  Apply to Final Resolution
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+      {/* Case and Analyst Information */}
+      <Card className="border-l-4 border-l-primary/50">
+        <CardContent className="pt-6">
+          <div className="grid grid-cols-2 gap-6">
+            <div>
+              <h4 className="text-sm font-semibold text-muted-foreground mb-1">Case Name</h4>
+              <p className="text-lg font-medium">{reportData.caseName} - {reportData.caseId}</p>
+            </div>
+            <div>
+              <h4 className="text-sm font-semibold text-muted-foreground mb-1">Analyst</h4>
+              <p className="text-lg font-medium">{reportData.analyst}</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
-          {/* Analyst Final Resolution */}
+      <div className="space-y-6">
+        {/* Timeline */}
+        <Card className="border-l-4 border-l-primary/50">
+          <CardHeader>
+            <CardTitle>Timeline</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="relative pl-6">
+              {/* Vertical Line */}
+              <div className="absolute left-2 top-0 bottom-0 w-0.5 bg-border"></div>
+
+              <div className="space-y-6">
+                <div className="relative">
+                  <div className="absolute -left-[26px] w-3 h-3 rounded-full bg-blue-500 border-4 border-background"></div>
+                  <div>
+                    <p className="text-sm font-semibold">Case Registered</p>
+                    <p className="text-xs text-muted-foreground mt-1">March 10, 2024 at 09:42 AM</p>
+                  </div>
+                </div>
+
+                {isAssigned ? (
+                  <>
+                    <div className="relative">
+                      <div className="absolute -left-[26px] w-3 h-3 rounded-full bg-orange-500 border-4 border-background"></div>
+                      <div>
+                        <p className="text-sm font-semibold">Case Assigned to Analyst</p>
+                        <p className="text-xs text-muted-foreground mt-1">March 10, 2024 at 10:00 AM - Assigned to {reportData.analyst}</p>
+                      </div>
+                    </div>
+
+                    {isReportSubmitted ? (
+                      <div className="relative">
+                        <div className="absolute -left-[26px] w-3 h-3 rounded-full bg-green-500 border-4 border-background"></div>
+                        <div>
+                          <p className="text-sm font-semibold">Report Submitted to User</p>
+                          <p className="text-xs text-muted-foreground mt-1">March 10, 2024 at 02:30 PM</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="relative">
+                        <div className="absolute -left-[26px] w-3 h-3 rounded-full bg-gray-400 border-4 border-background"></div>
+                        <div>
+                          <p className="text-sm font-semibold text-muted-foreground">Report Not Yet Submitted</p>
+                          <p className="text-xs text-muted-foreground mt-1">Pending submission</p>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="relative">
+                    <div className="absolute -left-[26px] w-3 h-3 rounded-full bg-gray-400 border-4 border-background"></div>
+                    <div>
+                      <p className="text-sm font-semibold text-muted-foreground">Case Not Yet Assigned</p>
+                      <p className="text-xs text-muted-foreground mt-1">Waiting for analyst assignment</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Analyst Final Report or Not Submitted Message */}
+        {isReportSubmitted ? (
           <Card className="border-border/50 shadow-sm">
             <CardHeader>
-              <CardTitle>Analyst Final Resolution</CardTitle>
-              <CardDescription>Edit the final message that will be sent to the user.</CardDescription>
+              <CardTitle>Analyst Final Report</CardTitle>
+              <CardDescription>Final report submitted to the user.</CardDescription>
             </CardHeader>
             <CardContent>
               <Textarea
                 placeholder="Enter your final resolution..."
                 className="min-h-[400px] font-mono text-sm resize-y"
+                readOnly
                 defaultValue={`REPORT SUMMARY
 --------------------------------------------------
   Case ID: CASE - 12345
@@ -129,39 +176,35 @@ NEXT STEPS FOR USER
   Regards,
   Security Operations Center`}
               />
+              <div className="flex justify-end mt-4">
+                <Button
+                  variant="outline"
+                  className="gap-2"
+                  onClick={handleDownloadPDF}
+                >
+                  <Download className="h-4 w-4" />
+                  Download Report as PDF
+                </Button>
+              </div>
             </CardContent>
           </Card>
-        </div>
-
-        <div className="space-y-6">
-          {/* Actions */}
-          <Card className="border-border/50 shadow-sm sticky top-6">
-            <CardHeader>
-              <CardTitle>Actions</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <Button variant="outline" className="w-full justify-start gap-2" onClick={handlePreview}>
-                <Eye className="h-4 w-4" />
-                Preview PDF
-              </Button>
-              <Button variant="outline" className="w-full justify-start gap-2" onClick={handleSaveDraft}>
-                <Save className="h-4 w-4" />
-                Save Draft
-              </Button>
-              <Button variant="outline" className="w-full justify-start gap-2" onClick={handleDownloadPDF}>
-                <Download className="h-4 w-4" />
-                Download PDF
-              </Button>
-              <Separator />
-              <Button className="w-full justify-start gap-2" onClick={handleSendEmail}>
-                <Send className="h-4 w-4" />
-                Send to User
-              </Button>
+        ) : (
+          <Card className="border-border/50 shadow-sm">
+            <CardContent className="pt-6">
+              <div className="text-center py-12">
+                <div className="h-20 w-20 rounded-full bg-muted mx-auto mb-4 flex items-center justify-center">
+                  <FileText className="h-10 w-10 text-muted-foreground" />
+                </div>
+                <h3 className="text-xl font-semibold mb-2">Report Not Submitted</h3>
+                <p className="text-muted-foreground">
+                  The analyst has not yet submitted the final report for this case.
+                </p>
+              </div>
             </CardContent>
           </Card>
-        </div>
+        )}
       </div>
+
     </div>
   );
 }
-
