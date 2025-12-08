@@ -21,30 +21,6 @@ const BAR_DATA = [
 export default function Home() {
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
-      {/* System Status Banner */}
-      <div className="flex items-center justify-between p-4 rounded-lg border border-primary/20 bg-primary/5 backdrop-blur-sm">
-        <div className="flex items-center gap-3">
-          <div className="relative flex h-3 w-3">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-          </div>
-          <div>
-            <h3 className="font-mono font-bold text-primary tracking-wider">SYSTEM ONLINE</h3>
-            <p className="text-xs text-muted-foreground font-mono">THREAT MONITORING ACTIVE</p>
-          </div>
-        </div>
-        <div className="flex items-center gap-4 text-sm font-mono text-muted-foreground">
-          <div className="flex items-center gap-2">
-            <Activity className="w-4 h-4 text-primary" />
-            <span>NET: STABLE</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Shield className="w-4 h-4 text-primary" />
-            <span>DEF: 98%</span>
-          </div>
-        </div>
-      </div>
-
       {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card className="tech-card border-l-4 border-l-primary/50">
@@ -144,7 +120,7 @@ export default function Home() {
               ].map((alert, i) => (
                 <div key={i} className="flex items-start gap-3 p-2 rounded hover:bg-muted/50 transition-colors">
                   <AlertTriangle className={`h-4 w-4 mt-0.5 ${alert.severity === 'high' ? 'text-red-500' :
-                      alert.severity === 'medium' ? 'text-yellow-500' : 'text-blue-500'
+                    alert.severity === 'medium' ? 'text-yellow-500' : 'text-blue-500'
                     }`} />
                   <div className="flex-1 space-y-1">
                     <p className="text-sm font-medium leading-none">{alert.msg}</p>
