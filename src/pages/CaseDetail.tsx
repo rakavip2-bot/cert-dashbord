@@ -24,7 +24,6 @@ import {
   Video,
   Bot,
   Shield,
-  ChevronDown,
   UserPlus
 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
@@ -117,13 +116,18 @@ export default function CaseDetail() {
       setIsPinned(true);
     }
 
-    // Load analyst from case data based on ID
+    // Load analyst and status from case data based on ID
     if (id) {
       const caseData = MOCK_CASES.find(c => c.id === id);
-      if (caseData && caseData.analyst) {
-        setAssignedAnalyst(caseData.analyst);
-      } else {
-        setAssignedAnalyst("");
+      if (caseData) {
+        // Set analyst
+        if (caseData.analyst) {
+          setAssignedAnalyst(caseData.analyst);
+        } else {
+          setAssignedAnalyst("");
+        }
+        // Set status from case data
+        setStatus(caseData.status);
       }
     }
   }, [id]);
@@ -144,10 +148,7 @@ export default function CaseDetail() {
     localStorage.setItem('pinnedCases', JSON.stringify(newPinned));
   };
 
-  const handleStatusChange = (newStatus: "Pending" | "Active" | "Solved") => {
-    setStatus(newStatus);
-    toast.success(`Case status updated to ${newStatus}`);
-  };
+
 
   const getStatusColor = (s: string) => {
     switch (s) {
@@ -180,39 +181,40 @@ export default function CaseDetail() {
         </div>
 
         <div className="flex items-center gap-3">
-          <Badge variant="outline" className="text-lg py-1 px-3 border-orange-500 text-orange-500 bg-orange-500/10">
+          {/* Severity Badge */}
+          <Badge
+            variant="outline"
+            className={`text-base py-2 px-4 font-semibold border-2 ${CASE_DATA.severity === 'Critical' ? 'border-red-500 text-red-600 bg-red-50 dark:bg-red-950' :
+                CASE_DATA.severity === 'High' ? 'border-orange-500 text-orange-600 bg-orange-50 dark:bg-orange-950' :
+                  CASE_DATA.severity === 'Medium' ? 'border-yellow-500 text-yellow-600 bg-yellow-50 dark:bg-yellow-950' :
+                    'border-blue-500 text-blue-600 bg-blue-50 dark:bg-blue-950'
+              }`}
+          >
             <AlertTriangle className="w-4 h-4 mr-2" />
             {CASE_DATA.severity} Severity
           </Badge>
 
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className={`gap-2 border-2 ${getStatusColor(status)}`}>
-                {status === "Solved" && <CheckCircle className="w-4 h-4" />}
-                {status === "Active" && <Clock className="w-4 h-4" />}
-                {status === "Pending" && <AlertTriangle className="w-4 h-4" />}
-                {status === "Active" && (
-                  <span className="relative flex h-2 w-2 mr-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-                  </span>
-                )}
-                Status: {status}
-                <ChevronDown className="w-4 h-4 ml-1 opacity-50" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => handleStatusChange("Pending")}>
-                <AlertTriangle className="w-4 h-4 mr-2 text-yellow-500" /> Pending
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleStatusChange("Active")}>
-                <Clock className="w-4 h-4 mr-2 text-blue-500" /> Active
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleStatusChange("Solved")}>
-                <CheckCircle className="w-4 h-4 mr-2 text-green-500" /> Solved
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {/* Status Badge */}
+          <Badge
+            variant="outline"
+            className={`text-base py-2 px-4 font-semibold border-2 ${status === 'Solved' ? 'border-green-500 text-green-600 bg-green-50 dark:bg-green-950' :
+                status === 'Active' ? 'border-blue-500 text-blue-600 bg-blue-50 dark:bg-blue-950' :
+                  'border-yellow-500 text-yellow-600 bg-yellow-50 dark:bg-yellow-950'
+              }`}
+          >
+            {status === "Solved" && <CheckCircle className="w-4 h-4 mr-2" />}
+            {status === "Active" && (
+              <>
+                <Clock className="w-4 h-4 mr-2" />
+                <span className="relative flex h-2 w-2 mr-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                </span>
+              </>
+            )}
+            {status === "Pending" && <AlertTriangle className="w-4 h-4 mr-2" />}
+            {status}
+          </Badge>
         </div>
       </div>
 

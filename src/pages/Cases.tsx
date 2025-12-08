@@ -324,7 +324,6 @@ export default function Cases() {
                   <TableHead className="text-center font-bold text-xs uppercase tracking-wider h-12 px-4 w-40">Type</TableHead>
                   <TableHead className="text-center font-bold text-xs uppercase tracking-wider h-12 px-4 w-32">Status</TableHead>
                   <TableHead className="text-center font-bold text-xs uppercase tracking-wider h-12 px-4 w-32">Severity</TableHead>
-                  <TableHead className="text-center font-bold text-xs uppercase tracking-wider h-12 px-4 w-32">Deadline</TableHead>
                   <TableHead className="text-center font-bold text-xs uppercase tracking-wider h-12 px-4 w-40">Analyst</TableHead>
                   <TableHead className="text-center font-bold text-xs uppercase tracking-wider h-12 px-4 w-24">Action</TableHead>
                 </TableRow>
@@ -349,7 +348,6 @@ export default function Cases() {
                     <TableCell className="text-center align-middle h-16 px-4">
                       {getSeverityBadge(c.severity)}
                     </TableCell>
-                    <TableCell className="text-center font-mono text-sm align-middle h-16 px-4">{c.deadline}</TableCell>
                     <TableCell className="text-center text-sm align-middle h-16 px-4">
                       {c.analyst && c.analyst.trim() !== "" ? (
                         <div className="flex flex-col items-center gap-1">
