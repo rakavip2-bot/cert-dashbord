@@ -23,11 +23,11 @@ const queryClient = new QueryClient();
 const App = () => {
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
-    // Enforce light mode by default unless 'dark' is explicitly saved
-    if (savedTheme === "dark") {
-      document.documentElement.classList.add("dark");
-    } else {
+    // Enforce Dark Mode for the Cyber Portal unless 'light' is explicitly saved
+    if (savedTheme === "light") {
       document.documentElement.classList.remove("dark");
+    } else {
+      document.documentElement.classList.add("dark");
     }
   }, []);
 

@@ -13,6 +13,12 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ["Inter", "sans-serif"],
+      },
+      boxShadow: {
+        portal: "0 4px 20px -2px rgba(0, 0, 0, 0.3)",
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
