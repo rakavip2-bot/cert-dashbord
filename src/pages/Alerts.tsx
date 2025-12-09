@@ -1,18 +1,7 @@
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -20,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Bell, Send, Inbox, AlertTriangle, CheckCircle, Clock, MessageSquare, Filter, ExternalLink, Mail } from "lucide-react";
+import { Bell, AlertTriangle, CheckCircle, Clock, Filter, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 
@@ -33,16 +22,6 @@ export interface Alert {
   time: string;
   read: boolean;
   type: "System" | "AI";
-}
-
-export interface Message {
-  id: string;
-  sender: string;
-  role: "User" | "Analyst";
-  content: string;
-  time: string;
-  read: boolean;
-  caseId?: string;
 }
 
 export const MOCK_ALERTS: Alert[] = [
@@ -88,58 +67,14 @@ export const MOCK_ALERTS: Alert[] = [
   },
 ];
 
-export const MOCK_MESSAGES: Message[] = [
-  {
-    id: "MSG-001",
-    sender: "Sarah Smith",
-    role: "User",
-    content: "I've reset my password but I'm still getting the error. Can you check?",
-    time: "15 mins ago",
-    read: false,
-    caseId: "CASE-105",
-  },
-  {
-    id: "MSG-002",
-    sender: "John Doe",
-    role: "User",
-    content: "Thanks for the quick resolution on the phishing email.",
-    time: "3 hours ago",
-    read: true,
-    caseId: "CASE-101",
-  },
-  {
-    id: "MSG-003",
-    sender: "Mike Jones",
-    role: "User",
-    content: "Is there an update on the data leakage investigation?",
-    time: "5 hours ago",
-    read: true,
-    caseId: "CASE-120",
-  },
-];
-
 export default function Alerts() {
   const navigate = useNavigate();
   const [alerts, setAlerts] = useState<Alert[]>(MOCK_ALERTS);
-  const [messages, setMessages] = useState<Message[]>(MOCK_MESSAGES);
   const [filterSeverity, setFilterSeverity] = useState<string>("all");
-  const [replyText, setReplyText] = useState("");
 
   const handleMarkAlertRead = (id: string) => {
     setAlerts(alerts.map(a => a.id === id ? { ...a, read: true } : a));
     toast.success("Alert marked as read");
-  };
-
-  const handleMarkMessageRead = (id: string) => {
-    setMessages(messages.map(m => m.id === id ? { ...m, read: true } : m));
-    toast.success("Message marked as read");
-  };
-
-  const handleSendReply = (messageId: string) => {
-    if (!replyText.trim()) return;
-    toast.success("Reply sent successfully");
-    setReplyText("");
-    handleMarkMessageRead(messageId);
   };
 
   const getSeverityBadge = (severity: Alert["severity"]) => {
@@ -161,51 +96,43 @@ export default function Alerts() {
     <div className="space-y-6 animate-in fade-in duration-500 max-w-6xl mx-auto">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold text-foreground tracking-tight">Alerts & Messages</h2>
-          <p className="text-muted-foreground mt-1">Stay informed with system notifications and user communications.</p>
+          <h2 className="text-3xl font-bold text-foreground tracking-tight">System Alerts</h2>
+          <p className="text-muted-foreground mt-1">Stay informed with critical system notifications.</p>
         </div>
-        <div className="p-2 bg-primary/10 rounded-full">
+        <div className="relative p-2 bg-primary/10 rounded-full">
           <Bell className="h-6 w-6 text-primary" />
+          {alerts.some(a => !a.read) && (
+            <span className="absolute top-0 right-0 flex h-3 w-3">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500 border-2 border-background"></span>
+            </span>
+          )}
         </div>
       </div>
 
-      <Tabs defaultValue="alerts" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-2 max-w-[400px]">
-          <TabsTrigger value="alerts" className="gap-2">
-            <Bell className="h-4 w-4" />
-            System Alerts
-            {alerts.some(a => !a.read) && (
-              <span className="flex h-2 w-2 rounded-full bg-red-500 animate-pulse" />
-            )}
-          </TabsTrigger>
-          <TabsTrigger value="messages" className="gap-2">
-            <MessageSquare className="h-4 w-4" />
-            Messages
-            {messages.some(m => !m.read) && (
-              <span className="flex h-2 w-2 rounded-full bg-blue-500 animate-pulse" />
-            )}
-          </TabsTrigger>
-        </TabsList>
+      <div className="space-y-4">
+        <div className="flex justify-end">
+          <Select value={filterSeverity} onValueChange={setFilterSeverity}>
+            <SelectTrigger className="w-[180px]">
+              <Filter className="mr-2 h-4 w-4" />
+              <SelectValue placeholder="Filter by Severity" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Severities</SelectItem>
+              <SelectItem value="High">High Priority</SelectItem>
+              <SelectItem value="Medium">Medium Priority</SelectItem>
+              <SelectItem value="Low">Low Priority</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
 
-        {/* ALERTS TAB */}
-        <TabsContent value="alerts" className="space-y-4">
-          <div className="flex justify-end">
-            <Select value={filterSeverity} onValueChange={setFilterSeverity}>
-              <SelectTrigger className="w-[180px]">
-                <Filter className="mr-2 h-4 w-4" />
-                <SelectValue placeholder="Filter by Severity" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Severities</SelectItem>
-                <SelectItem value="High">High Priority</SelectItem>
-                <SelectItem value="Medium">Medium Priority</SelectItem>
-                <SelectItem value="Low">Low Priority</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="grid gap-4">
-            {filteredAlerts.map((alert) => (
+        <div className="grid gap-4">
+          {filteredAlerts.length === 0 ? (
+            <div className="text-center py-12 text-muted-foreground">
+              No alerts found matching the current filter.
+            </div>
+          ) : (
+            filteredAlerts.map((alert) => (
               <Card key={alert.id} className={`tech-card transition-all duration-200 ${!alert.read ? 'border-l-4 border-l-primary bg-primary/5' : 'opacity-80'}`}>
                 <CardContent className="p-6 flex items-start gap-4">
                   <div className={`mt-1 p-2 rounded-full ${alert.severity === 'High' ? 'bg-red-500/10 text-red-500' : 'bg-primary/10 text-primary'}`}>
@@ -240,74 +167,10 @@ export default function Alerts() {
                   </div>
                 </CardContent>
               </Card>
-            ))}
-          </div>
-        </TabsContent>
-
-        {/* MESSAGES TAB */}
-        <TabsContent value="messages" className="space-y-4">
-          <div className="grid gap-4">
-            {messages.map((msg) => (
-              <Card key={msg.id} className={`tech-card transition-all duration-200 ${!msg.read ? 'border-l-4 border-l-blue-500 bg-blue-500/5' : ''}`}>
-                <CardContent className="p-6 flex items-start gap-4">
-                  <div className="mt-1 p-2 rounded-full bg-blue-500/10 text-blue-500">
-                    <Mail className="h-5 w-5" />
-                  </div>
-                  <div className="flex-1 space-y-1">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <h3 className="font-semibold text-lg">{msg.sender}</h3>
-                        <Badge variant="outline">{msg.role}</Badge>
-                        {msg.caseId && <Badge variant="secondary" className="font-mono text-xs">{msg.caseId}</Badge>}
-                      </div>
-                      <span className="text-sm text-muted-foreground flex items-center gap-1 font-mono">
-                        <Clock className="h-3 w-3" /> {msg.time}
-                      </span>
-                    </div>
-                    <p className="text-foreground/90 mt-2">{msg.content}</p>
-
-                    <div className="pt-3 flex gap-2">
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button size="sm" className="gap-2">
-                            <Send className="h-3 w-3" />
-                            Reply
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent>
-                          <DialogHeader>
-                            <DialogTitle>Reply to {msg.sender}</DialogTitle>
-                            <DialogDescription>
-                              Send a secure message to the user regarding {msg.caseId}.
-                            </DialogDescription>
-                          </DialogHeader>
-                          <div className="py-4">
-                            <Textarea
-                              placeholder="Type your reply here..."
-                              className="min-h-[100px]"
-                              value={replyText}
-                              onChange={(e) => setReplyText(e.target.value)}
-                            />
-                          </div>
-                          <DialogFooter>
-                            <Button onClick={() => handleSendReply(msg.id)}>Send Reply</Button>
-                          </DialogFooter>
-                        </DialogContent>
-                      </Dialog>
-
-                      {!msg.read && (
-                        <Button variant="ghost" size="sm" onClick={() => handleMarkMessageRead(msg.id)}>
-                          Mark as Read
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
-      </Tabs>
+            ))
+          )}
+        </div>
+      </div>
     </div>
   );
 }

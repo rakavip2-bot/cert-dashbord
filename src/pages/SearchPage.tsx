@@ -1,25 +1,24 @@
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
-  Search, ArrowRight, History, Star, X, Mic,
-  FileText, BookOpen, MessageSquare, AlertTriangle
+  Search, History, Star, X, Mic,
+  FileText, BookOpen, MessageSquare
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { MOCK_CASES, Case } from "./Cases";
 import { MOCK_PLAYBOOKS, Playbook } from "./Playbooks";
 import { MOCK_REPORTS, Report } from "./Reports";
-import { MOCK_ALERTS, Alert, MOCK_MESSAGES, Message } from "./Alerts";
+import { MOCK_ALERTS, Alert } from "./Alerts";
 
 type SearchResult =
   | { type: 'case', data: Case }
   | { type: 'playbook', data: Playbook }
   | { type: 'report', data: Report }
-  | { type: 'alert', data: Alert }
-  | { type: 'message', data: Message };
+  | { type: 'alert', data: Alert };
 
 export default function SearchPage() {
   const navigate = useNavigate();
@@ -66,20 +65,15 @@ export default function SearchPage() {
 
     // Search Reports
     MOCK_REPORTS.forEach(r => {
-      if (r.title.toLowerCase().includes(query) || r.user.toLowerCase().includes(query)) {
+      if (r.title.toLowerCase().includes(query) || r.analyst.toLowerCase().includes(query)) {
         newResults.push({ type: 'report', data: r });
       }
     });
 
-    // Search Alerts & Messages
+    // Search Alerts
     MOCK_ALERTS.forEach(a => {
       if (a.title.toLowerCase().includes(query) || a.message.toLowerCase().includes(query)) {
         newResults.push({ type: 'alert', data: a });
-      }
-    });
-    MOCK_MESSAGES.forEach(m => {
-      if (m.content.toLowerCase().includes(query) || m.sender.toLowerCase().includes(query)) {
-        newResults.push({ type: 'message', data: m });
       }
     });
 
@@ -254,7 +248,7 @@ export default function SearchPage() {
                           {result.type === 'case' && <FileText className="h-5 w-5 text-blue-500" />}
                           {result.type === 'playbook' && <BookOpen className="h-5 w-5 text-green-500" />}
                           {result.type === 'report' && <FileText className="h-5 w-5 text-purple-500" />}
-                          {(result.type === 'alert' || result.type === 'message') && <MessageSquare className="h-5 w-5 text-orange-500" />}
+                          {result.type === 'alert' && <MessageSquare className="h-5 w-5 text-orange-500" />}
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between mb-1">
@@ -263,8 +257,7 @@ export default function SearchPage() {
                                 result.type === 'case' ? (result.data as Case).id :
                                   result.type === 'playbook' ? (result.data as Playbook).title :
                                     result.type === 'report' ? (result.data as Report).title :
-                                      result.type === 'alert' ? (result.data as Alert).title :
-                                        (result.data as Message).sender
+                                      (result.data as Alert).title
                               } />
                             </h4>
                             <Badge variant="secondary" className="capitalize text-xs">{result.type}</Badge>
@@ -274,8 +267,7 @@ export default function SearchPage() {
                               result.type === 'case' ? `${(result.data as Case).type} - ${(result.data as Case).userName}` :
                                 result.type === 'playbook' ? (result.data as Playbook).summary :
                                   result.type === 'report' ? `Report for ${(result.data as Report).caseId}` :
-                                    result.type === 'alert' ? (result.data as Alert).message :
-                                      (result.data as Message).content
+                                    (result.data as Alert).message
                             } />
                           </p>
                         </div>
