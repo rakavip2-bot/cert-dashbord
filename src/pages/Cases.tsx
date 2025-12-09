@@ -188,21 +188,21 @@ export default function Cases() {
   };
 
   const getStatusBadge = (status: Case["status"]) => {
-    const commonClasses = "w-[100px] justify-center font-semibold";
+    const commonClasses = "flex items-center justify-center gap-1.5 font-semibold";
     switch (status) {
-      case "Solved": return <Badge className={`bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/25 flex items-center gap-1 ${commonClasses}`}><CheckCircle className="w-3 h-3" /> Solved</Badge>;
-      case "Active": return <Badge className={`bg-blue-500/15 text-blue-700 dark:text-blue-400 border-blue-500/30 hover:bg-blue-500/25 flex items-center gap-1 ${commonClasses}`}><Clock className="w-3 h-3" /> Active</Badge>;
-      case "Pending": return <Badge className={`bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/30 hover:bg-amber-500/25 flex items-center gap-1 ${commonClasses}`}><AlertCircle className="w-3 h-3" /> Pending</Badge>;
+      case "Solved": return <div className={`text-emerald-600 dark:text-emerald-400 ${commonClasses}`}><CheckCircle className="w-4 h-4" /> Solved</div>;
+      case "Active": return <div className={`text-blue-600 dark:text-blue-400 ${commonClasses}`}><Clock className="w-4 h-4" /> Active</div>;
+      case "Pending": return <div className={`text-amber-600 dark:text-amber-400 ${commonClasses}`}><AlertCircle className="w-4 h-4" /> Pending</div>;
     }
   };
 
   const getSeverityBadge = (severity: Case["severity"]) => {
-    const commonClasses = "w-[100px] justify-center font-semibold border";
+    const commonClasses = "flex items-center justify-center gap-1.5 font-medium";
     switch (severity) {
-      case "Critical": return <Badge className={`bg-red-500/15 text-red-700 dark:text-red-400 border-red-500/30 hover:bg-red-500/25 flex items-center gap-1 ${commonClasses}`}><ShieldAlert className="w-3 h-3" /> Critical</Badge>;
-      case "High": return <Badge className={`bg-orange-500/15 text-orange-700 dark:text-orange-400 border-orange-500/30 hover:bg-orange-500/25 flex items-center gap-1 ${commonClasses}`}><AlertTriangle className="w-3 h-3" /> High</Badge>;
-      case "Medium": return <Badge className={`bg-yellow-500/15 text-yellow-700 dark:text-yellow-400 border-yellow-500/30 hover:bg-yellow-500/25 flex items-center gap-1 ${commonClasses}`}><AlertCircle className="w-3 h-3" /> Medium</Badge>;
-      case "Low": return <Badge className={`bg-blue-500/15 text-blue-700 dark:text-blue-400 border-blue-500/30 hover:bg-blue-500/25 flex items-center gap-1 ${commonClasses}`}><Info className="w-3 h-3" /> Low</Badge>;
+      case "Critical": return <div className={`text-red-600 dark:text-red-400 ${commonClasses}`}><ShieldAlert className="w-4 h-4" /> Critical</div>;
+      case "High": return <div className={`text-orange-600 dark:text-orange-400 ${commonClasses}`}><AlertTriangle className="w-4 h-4" /> High</div>;
+      case "Medium": return <div className={`text-yellow-600 dark:text-yellow-400 ${commonClasses}`}><AlertCircle className="w-4 h-4" /> Medium</div>;
+      case "Low": return <div className={`text-blue-600 dark:text-blue-400 ${commonClasses}`}><Info className="w-4 h-4" /> Low</div>;
     }
   };
 

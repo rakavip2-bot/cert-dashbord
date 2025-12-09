@@ -30,7 +30,7 @@ export function AppSidebar() {
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel className="text-sidebar-primary font-semibold">
-            Case Management
+            Admin Dashboard
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
