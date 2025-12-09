@@ -29,7 +29,7 @@ export function AppSidebar() {
     <Sidebar collapsible="icon">
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="text-sidebar-primary font-semibold">
+          <SidebarGroupLabel className="text-sidebar-primary text-base font-extrabold uppercase tracking-wider py-4">
             Admin Dashboard
           </SidebarGroupLabel>
           <SidebarGroupContent>
