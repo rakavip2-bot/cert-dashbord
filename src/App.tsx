@@ -23,10 +23,11 @@ const queryClient = new QueryClient();
 const App = () => {
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
-    if (savedTheme === "light") {
-      document.documentElement.classList.remove("dark");
-    } else if (savedTheme === "dark") {
+    // Enforce light mode by default unless 'dark' is explicitly saved
+    if (savedTheme === "dark") {
       document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
     }
   }, []);
 
